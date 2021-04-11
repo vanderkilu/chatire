@@ -1,8 +1,9 @@
 import { UserDTO } from "dtos/user.dto";
+import { IUserService } from "../interfaces/user.service.interface";
 import { User } from "../interfaces/user.interface";
 import userModel from "../models/user.model";
 
-class UserService {
+class UserService implements IUserService {
   private users = userModel;
 
   public async createUser(userData: UserDTO, identity: string): Promise<User> {
@@ -14,6 +15,13 @@ class UserService {
       identity,
       username: userData.username,
     });
+    return user;
+  }
+
+  public async toggleUserBlock(userId: string): Promise<User> {
+    const user = await this.users.findById(userId);
+    user.isBlocked = !user.isBlocked;
+    await user.save();
     return user;
   }
 }

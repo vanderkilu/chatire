@@ -5,18 +5,28 @@ import * as hpp from "hpp";
 import * as mongoose from "mongoose";
 import * as logger from "morgan";
 import * as path from "path";
+import * as http from "http";
 import Routes from "./interfaces/routes.interface";
 import errorMiddleware from "./middlewares/error.middleware";
+import { Server } from "socket.io";
+import ChatSocketServer from "./sockets";
 
 class App {
   public app: express.Application;
   public port: string | number;
   public env: boolean;
+  public server: http.Server;
+  public io: Server;
 
   constructor(routes: Routes[]) {
     this.app = express();
+    this.server = http.createServer(this.app);
+    this.io = new Server(this.server);
     this.port = process.env.PORT || 8080;
     this.env = process.env.NODE_ENV === "production" ? true : false;
+
+    const chatSocket = new ChatSocketServer(this.io);
+    chatSocket.initSocket();
 
     this.connectToDatabase();
     this.initializeMiddlewares();

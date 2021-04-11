@@ -5,7 +5,7 @@
     "start": "cross-env NODE_ENV=production node dist/server.js",
     "build": "tsc --module commonjs",
     "postinstall": "npm run build",
-    "dev": "cross-env NODE_ENV=development nodemon --watch src --delay 1 --exec 'ts-node' server/server.ts",
+    "dev": "cross-env NODE_ENV=development nodemon --watch server --delay 1 --exec 'ts-node' server/server.ts",
     "test": "jest --forceExit --detectOpenHandles",
     "lint": "tslint -p tsconfig.json -c tslint.json"
   },
@@ -22,7 +22,8 @@
     "hpp": "^0.2.3",
     "jwks-rsa": "^2.0.2",
     "mongoose": "~5.10.11",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "socket.io": "^4.0.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.7",

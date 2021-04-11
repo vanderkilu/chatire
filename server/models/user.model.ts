@@ -5,6 +5,10 @@ const UserSchema = new mongoose.Schema(
   {
     identity: String,
     username: String,
+    isBlocked: {
+      type: String,
+      default: false,
+    },
   },
   { timestamps: true }
 );
