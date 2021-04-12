@@ -18,7 +18,7 @@ const Auth0ProviderWithHistory: React.FC<{}> = ({ children }) => {
     <Auth0Provider
       domain={domain}
       clientId={clientId}
-      redirectUri={window.location.origin}
+      redirectUri={`${window.location.origin}/auth-redirect`}
       onRedirectCallback={onRedirectCallback}
       audience={audience}
     >

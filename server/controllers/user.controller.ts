@@ -15,6 +15,7 @@ class UserController {
     res: Response,
     next: NextFunction
   ) => {
+    console.log("req", req.user.sub);
     try {
       const userData: UserDTO = {
         username: req.body.username,

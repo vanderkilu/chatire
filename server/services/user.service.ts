@@ -7,6 +7,7 @@ class UserService implements IUserService {
   private users = userModel;
 
   public async createUser(userData: UserDTO, identity: string): Promise<User> {
+    console.log("something");
     const alreadyExistingUser = await this.users.findOne({
       identity: identity,
     });
