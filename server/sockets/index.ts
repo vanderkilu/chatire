@@ -2,7 +2,7 @@ import * as socket from "socket.io";
 import { ChatEvent } from "./constants";
 
 type User = {
-  id: string;
+  identity: string;
   username: string;
 };
 
@@ -13,7 +13,7 @@ type ChatMessage = {
 
 class ChatSocketServer {
   private io: socket.Server;
-  private onlineUsers: Set<User>;
+  private onlineUsers: Set<string>;
   constructor(io: socket.Server) {
     this.io = io;
     this.onlineUsers = new Set();
@@ -23,12 +23,17 @@ class ChatSocketServer {
     this.io.sockets.on(ChatEvent.CONNECT, (socket: socket.Socket) => {
       console.log("user connected");
       socket.on(ChatEvent.NEW_USER, (data: User) => {
-        this.onlineUsers.add(data);
-        this.io.emit(ChatEvent.NEW_USER, [...this.onlineUsers]);
+        const value = JSON.stringify(data);
+        this.onlineUsers.add(value);
+        this.io.emit(
+          ChatEvent.NEW_USER,
+          [...this.onlineUsers].map((user) => JSON.parse(user))
+        );
       });
 
       socket.on(ChatEvent.DISCONNECT, (data: User) => {
-        this.onlineUsers.delete(data);
+        const value = JSON.stringify(data);
+        this.onlineUsers.delete(value);
         this.io.emit(ChatEvent.USER_LEAVE, data);
       });
 

@@ -1,4 +1,14 @@
 import styled from "styled-components";
+import io from "socket.io-client";
+import { useEffect, useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
+import { ChatEvent, User } from "../types";
+import ChatWelcome from "./ChatWelcome";
+
+const SOCKET_URL = "http://localhost:8080";
+const socket = io(SOCKET_URL, {
+  withCredentials: true,
+});
 
 const StyledChatContainer = styled.div`
   display: grid;
@@ -48,13 +58,16 @@ const StyledChatArea = styled.div`
   box-shadow: 0 15px 15px -5px rgba(0, 0, 0, 0.2);
 `;
 
-const StyledChatHeader = styled.header`
+const StyledChatHeader = styled.header<{
+  mb: number;
+}>`
   display: flex;
   justify-content: space-between;
   padding: 10px;
   border-bottom: 3px;
   background: #eee;
   color: #666;
+  margin-bottom: ${(props) => props.mb}rem;
 `;
 
 const StyledChatMessageArea = styled.div`
@@ -144,37 +157,65 @@ const StyledMsgText = styled.h3`
 `;
 
 const MainChat: React.FC<{}> = () => {
+  const { user } = useAuth0();
+  const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
+  const [selectedUser, setSelectedUser] = useState<User>();
+  useEffect(() => {
+    const USER = { identity: user.sub, username: user.name };
+    socket.emit(ChatEvent.NEW_USER, USER);
+    socket.on(ChatEvent.NEW_USER, (users: User[]) => {
+      setOnlineUsers(users);
+    });
+    return () => {};
+  }, []);
+
+  const getUserInitial = (username: string) => {
+    return username.charAt(0);
+  };
+
   return (
     <StyledChatContainer>
       <StyledChatSidebar>
-        {[1, 2, 3, 4].map((_, i) => (
-          <StyledSidebarUser>
-            <StyledSidebarUserPlaceholder>K</StyledSidebarUserPlaceholder>
-            <StyledSidebarText> Kweku Manu</StyledSidebarText>
+        <StyledChatHeader mb={10}>
+          <StyledText>kweku@gmail.com</StyledText>
+        </StyledChatHeader>
+        <StyledChatHeader mb={0.5}>
+          <StyledText>Online Users</StyledText>
+        </StyledChatHeader>
+        {onlineUsers.map((user) => (
+          <StyledSidebarUser key={user.identity}>
+            <StyledSidebarUserPlaceholder>
+              <StyledText>{getUserInitial(user.username)}</StyledText>
+            </StyledSidebarUserPlaceholder>
+            <StyledSidebarText> {user.username} </StyledSidebarText>
           </StyledSidebarUser>
         ))}
       </StyledChatSidebar>
-      <StyledChatArea>
-        <StyledChatMessageArea>
-          <StyledMsg>
-            <StyledMsgImg>K</StyledMsgImg>
-            <StyledMsgBubble>
-              <StyledMsgInfo>
-                <StyledMsgInfoName>BOt</StyledMsgInfoName>
-                <StyledMsgInfoTime>12:30</StyledMsgInfoTime>
-              </StyledMsgInfo>
+      {selectedUser ? (
+        <StyledChatArea>
+          <StyledChatMessageArea>
+            <StyledMsg>
+              <StyledMsgImg>K</StyledMsgImg>
+              <StyledMsgBubble>
+                <StyledMsgInfo>
+                  <StyledMsgInfoName>BOt</StyledMsgInfoName>
+                  <StyledMsgInfoTime>12:30</StyledMsgInfoTime>
+                </StyledMsgInfo>
 
-              <StyledMsgText>
-                Hi, welcome to SimpleChat! Go ahead and send me a message. 😄
-              </StyledMsgText>
-            </StyledMsgBubble>
-          </StyledMsg>
-        </StyledChatMessageArea>
-        <StyledChatForm>
-          <StyledChatInput />
-          <StyledBtn>Send</StyledBtn>
-        </StyledChatForm>
-      </StyledChatArea>
+                <StyledMsgText>
+                  Hi, welcome to SimpleChat! Go ahead and send me a message. 😄
+                </StyledMsgText>
+              </StyledMsgBubble>
+            </StyledMsg>
+          </StyledChatMessageArea>
+          <StyledChatForm>
+            <StyledChatInput />
+            <StyledBtn>Send</StyledBtn>
+          </StyledChatForm>
+        </StyledChatArea>
+      ) : (
+        <ChatWelcome />
+      )}
     </StyledChatContainer>
   );
 };

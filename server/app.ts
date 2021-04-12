@@ -21,7 +21,12 @@ class App {
   constructor(routes: Routes[]) {
     this.app = express();
     this.server = http.createServer(this.app);
-    this.io = new Server(this.server);
+    this.io = new Server(this.server, {
+      cors: {
+        origin: "http://localhost:3000",
+        credentials: true,
+      },
+    });
     this.port = process.env.PORT || 8080;
     this.env = process.env.NODE_ENV === "production" ? true : false;
 
@@ -36,7 +41,7 @@ class App {
   }
 
   public listen() {
-    this.app.listen(this.port, () => {
+    this.server.listen(this.port, () => {
       console.log(`🚀 App listening on the port ${this.port}`);
     });
   }
