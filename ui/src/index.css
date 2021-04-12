@@ -1,0 +1,19 @@
+html {
+  box-sizing: border-box;
+  font-size: 62.5%;
+}
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+}
+:root {
+  --base-color: #1c1c1c;
+  --secondary-color: #2d79fd;
+  --tertiary-color: #21202c;
+  --chat-from-color: #052440;
+}
+body {
+  font-family: "Montserrat", sans-serif;
+}
