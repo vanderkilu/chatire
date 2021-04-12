@@ -9,6 +9,17 @@ export interface AuthUser {
   email: string;
 }
 
+export interface Chat {
+  message: string;
+  conversation: Conversation;
+}
+
+export interface Conversation {
+  _id: string;
+  fromUser: User;
+  toUser: User;
+}
+
 export enum ChatEvent {
   CONNECT = "connection",
   DISCONNECT = "disconnect",

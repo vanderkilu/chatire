@@ -38,6 +38,7 @@ class ChatSocketServer {
       });
 
       socket.on(ChatEvent.NEW_CONVERSATION, (conversationId: string) => {
+        console.log("conversation room setup", conversationId);
         socket.join(conversationId);
       });
 

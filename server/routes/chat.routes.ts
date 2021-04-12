@@ -25,10 +25,10 @@ class UserRoute implements Route {
     this.router.post(
       `${this.path}/conversation`,
       checkJwt,
-      this.chatController.createChat
+      this.chatController.createConversation
     );
     this.router.get(
-      `${this.path}/:userId`,
+      `${this.path}/:toUserId`,
       checkJwt,
       this.chatController.getChatBetweenUsers
     );

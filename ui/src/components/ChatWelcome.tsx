@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import chatImg from "../assets/chat.svg";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -23,11 +24,13 @@ const StyledWelcomeText = styled.h3`
 `;
 
 const ChatWelcome: React.FC<{}> = () => {
+  const { user } = useAuth0();
   return (
     <StyledWrapper>
       <StyledImage src={chatImg} alt="chat image" />
       <StyledWelcomeText>
-        Welcome to ChatApp, click on a user to initiate a conversation.
+        Welcome to ChatApp {user.name}, click on a user to initiate or continue
+        a conversation.
       </StyledWelcomeText>
     </StyledWrapper>
   );

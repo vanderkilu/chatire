@@ -43,3 +43,7 @@ export const StyledButton = styled.button`
     background: var(--secondary-color);
   }
 `;
+
+export const StyledText = styled.p`
+  font-size: 1.4rem;
+`;

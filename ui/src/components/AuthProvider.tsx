@@ -8,8 +8,6 @@ const Auth0ProviderWithHistory: React.FC<{}> = ({ children }) => {
   const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID as string;
   const audience = process.env.REACT_APP_AUTH0_AUDIENCE as string;
 
-  console.log(domain, clientId, audience);
-
   const onRedirectCallback = (appState: AppState) => {
     history.push(appState?.returnTo || window.location.pathname);
   };

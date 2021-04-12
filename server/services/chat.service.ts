@@ -15,19 +15,22 @@ class ChatService implements IChatService {
 
   public async createConversationIfNotExist(
     fromUserIdentity: string,
-    toUserId: string
+    toUserIdentity: string
   ): Promise<Conversation> {
     const currentUser = await this.users.findOne({
       identity: fromUserIdentity,
     });
+    const toUser = await this.users.findOne({
+      identity: toUserIdentity,
+    });
     const conversation = await this.conversations.findOne({
       fromUser: currentUser.id,
-      toUser: toUserId,
+      toUser: toUser.id,
     });
     if (conversation) return conversation;
     const newConversation = await this.conversations.create({
       fromUser: currentUser.id,
-      toUser: toUserId,
+      toUser: toUser.id,
     });
     newConversation.populate("fromUser");
     newConversation.populate("toUser");
@@ -36,20 +39,22 @@ class ChatService implements IChatService {
 
   public async getChatBetweenUsers(
     fromUserIdentity: string,
-    toUserId: string
+    toUserIdentity: string
   ): Promise<Chat[]> {
     const currentUser = await this.users.findOne({
       identity: fromUserIdentity,
     });
+    const toUser = await this.users.findOne({
+      identity: toUserIdentity,
+    });
     const conversation = await this.conversations.findOne({
       fromUser: currentUser.id,
-      toUser: toUserId,
+      toUser: toUser.id,
     });
     if (!conversation) {
-      throw new HttpException(
-        400,
-        "There is no conversation setup between the users"
-      );
+      //if there is no conversation then there is no chats so return
+      //empty array
+      return [];
     }
     const chats = await this.chats
       .find({ conversation: conversation.id })
@@ -59,14 +64,16 @@ class ChatService implements IChatService {
 
   public async createChat(chatData: ChatDTO, userIdentity: string) {
     const currentUser = await this.users.findOne({ identity: userIdentity });
-    const toUser: User = await this.users.findById(chatData.toUser);
+    const toUser: User = await this.users.findOne({
+      identity: chatData.toUser,
+    });
     if (toUser.isBlocked) {
       throw new HttpException(400, "Can't chat with blocked user");
     }
 
     let conversation = await this.conversations.findOne({
       fromUser: currentUser.id,
-      toUser: chatData.toUser,
+      toUser: toUser._id,
     });
     if (!conversation) {
       throw new HttpException(
