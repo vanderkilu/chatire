@@ -55,7 +55,11 @@ const MainChat: React.FC<{}> = () => {
       console.log("chat", chat);
       setCurrentChats((chats) => [...chats, chat]);
     });
-    return () => {};
+    return () => {
+      socket.emit(ChatEvent.DISCONNECT, USER);
+      socket.off(ChatEvent.NEW_USER);
+      socket.off(ChatEvent.NEW_CHAT_MESSAGE);
+    };
   }, []);
 
   const initiateConversation = async (id: string) => {
