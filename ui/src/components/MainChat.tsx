@@ -66,8 +66,7 @@ const StyledChatMessageArea = styled.div`
 const StyledChatForm = styled.form`
   display: flex;
   padding: 10px;
-  border-top: var(--border);
-  background: #ffffff;
+  background: #111111;
   & * {
     padding: 10px;
     border: none;
@@ -78,7 +77,7 @@ const StyledChatForm = styled.form`
 
 const StyledChatInput = styled.input`
   flex: 1;
-  background: #ddd;
+  background: #242c37;
 `;
 
 const StyledBtn = styled.button`
