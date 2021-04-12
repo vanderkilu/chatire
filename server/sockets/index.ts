@@ -47,6 +47,7 @@ class ChatSocketServer {
       });
 
       socket.on(ChatEvent.CHAT, (chatMsg: ChatMessage) => {
+        console.log("chats--sockets", chatMsg);
         this.io.sockets
           .in(chatMsg.conversationId)
           .emit(ChatEvent.NEW_CHAT_MESSAGE, chatMsg);

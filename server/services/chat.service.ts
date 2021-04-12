@@ -58,7 +58,13 @@ class ChatService implements IChatService {
     }
     const chats = await this.chats
       .find({ conversation: conversation.id })
-      .populate("conversation");
+      .populate({
+        path: "conversation",
+        populate: [
+          { path: "fromUser", model: "User" },
+          { path: "toUser", model: "User" },
+        ],
+      });
     return chats;
   }
 
@@ -67,9 +73,10 @@ class ChatService implements IChatService {
     const toUser: User = await this.users.findOne({
       identity: chatData.toUser,
     });
-    if (toUser.isBlocked) {
-      throw new HttpException(400, "Can't chat with blocked user");
-    }
+
+    // if (toUser.isBlocked) {
+    //   throw new HttpException(400, "Can't chat with blocked user");
+    // }
 
     let conversation = await this.conversations.findOne({
       fromUser: currentUser.id,
@@ -82,12 +89,21 @@ class ChatService implements IChatService {
       );
     }
 
-    const chat = await this.chats.create({
+    const chat = new this.chats({
       ...chatData,
       conversation: conversation.id,
     });
-    chat.populate("conversation");
-    return chat;
+    return chat.save().then((t) =>
+      t
+        .populate({
+          path: "conversation",
+          populate: [
+            { path: "fromUser", model: "User" },
+            { path: "toUser", model: "User" },
+          ],
+        })
+        .execPopulate()
+    );
   }
 }
 

@@ -11,6 +11,7 @@ const StyledChatArea = styled.div`
   border: 3px;
   background: #111111;
   box-shadow: 0 15px 15px -5px rgba(0, 0, 0, 0.2);
+  overflow-y: scroll;
 `;
 
 const StyledChatMessageArea = styled.div`

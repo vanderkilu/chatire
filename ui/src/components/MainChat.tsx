@@ -7,7 +7,7 @@ import ChatWelcome from "./ChatWelcome";
 import ChatArea from "./ChatArea";
 import { StyledText } from "./sharedStyles";
 import OnlineUser from "./OnlineUser";
-import { createConversation, getChats } from "../api/api";
+import { createChat, createConversation, getChats } from "../api/api";
 
 const SOCKET_URL = "http://localhost:8080";
 const socket = io(SOCKET_URL, {
@@ -43,12 +43,17 @@ const MainChat: React.FC<{}> = () => {
   const [selectedUser, setSelectedUser] = useState<User>();
   const [currentChats, setCurrentChats] = useState<Chat[]>([]);
   const [isChatLoading, setIsChatLoading] = useState(false);
+  const [isMessageCreateLoading, setIsMessageCreateLoading] = useState(false);
 
   useEffect(() => {
     const USER = { identity: user.sub, username: user.name };
     socket.emit(ChatEvent.NEW_USER, USER);
     socket.on(ChatEvent.NEW_USER, (users: User[]) => {
       setOnlineUsers(users);
+    });
+    socket.on(ChatEvent.NEW_CHAT_MESSAGE, (chat: Chat) => {
+      console.log("chat", chat);
+      setCurrentChats((chats) => [...chats, chat]);
     });
     return () => {};
   }, []);
@@ -66,6 +71,7 @@ const MainChat: React.FC<{}> = () => {
         );
         socket.emit(ChatEvent.NEW_CONVERSATION, conversation._id);
         const chats = await getChats(selectedUser.identity, token);
+        console.log("savedChats", chats);
         setCurrentChats(chats);
         setIsChatLoading(false);
       }
@@ -74,8 +80,26 @@ const MainChat: React.FC<{}> = () => {
     }
   };
 
-  const sendMessage = (msg: string) => {
-    console.log("message", msg);
+  const sendMessage = async (msg: string) => {
+    const token = await getAccessTokenSilently();
+    if (selectedUser) {
+      setIsMessageCreateLoading(true);
+      try {
+        const message = await createChat(
+          { message: msg, toUser: selectedUser.identity },
+          token
+        );
+        const MESSAGE = {
+          ...message,
+          conversationId: message.conversation._id,
+        };
+        console.log("message", message);
+        setIsMessageCreateLoading(false);
+        socket.emit(ChatEvent.CHAT, MESSAGE);
+      } catch (err) {
+        setIsMessageCreateLoading(false);
+      }
+    }
   };
 
   return (
