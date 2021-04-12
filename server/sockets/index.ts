@@ -31,7 +31,7 @@ class ChatSocketServer {
         );
       });
 
-      socket.on(ChatEvent.DISCONNECT, (data: User) => {
+      socket.on(ChatEvent.USER_DISCONNECT, (data: User) => {
         const value = JSON.stringify(data);
         this.onlineUsers.delete(value);
         this.io.emit(ChatEvent.USER_LEAVE, data);

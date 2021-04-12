@@ -1,6 +1,6 @@
 export enum ChatEvent {
   CONNECT = "connection",
-  DISCONNECT = "disconnect",
+  USER_DISCONNECT = "userDisconnect",
   CHAT = "chat",
   BLOCK = "block",
   NEW_USER = "newUser",
