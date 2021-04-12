@@ -2,7 +2,7 @@ import styled, { css } from "styled-components";
 import { Chat } from "../types";
 import { Loader } from "./sharedStyles";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const StyledChatArea = styled.div`
   display: flex;
@@ -35,6 +35,9 @@ const StyledChatForm = styled.form`
 const StyledChatInput = styled.input`
   flex: 1;
   background: #242c37;
+  color: #ffffff;
+  font: inherit;
+  font-size: 1.2rem;
 `;
 
 const StyledBtn = styled.button`
@@ -155,6 +158,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   isLoading,
   sendMessage,
 }) => {
+  const msgBoxRef = useRef<HTMLDivElement>(null);
   const [message, setMessage] = useState("");
   const handleOnInputChange = (e: InputEvent) => {
     setMessage(e.target.value);
@@ -162,6 +166,10 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   const handleOnSubmit = (e: FormEvent) => {
     e.preventDefault();
     sendMessage(message);
+    setMessage("");
+    if (msgBoxRef.current) {
+      msgBoxRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   };
   return (
     <StyledChatArea>
@@ -169,6 +177,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
         {chats.map((chat, i) => (
           <ChatMessage key={i} chat={chat} />
         ))}
+        <div ref={msgBoxRef} />
       </StyledChatMessageArea>
       {isLoading ? (
         <StyledLoaderContainer>

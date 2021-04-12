@@ -74,9 +74,9 @@ class ChatService implements IChatService {
       identity: chatData.toUser,
     });
 
-    // if (toUser.isBlocked) {
-    //   throw new HttpException(400, "Can't chat with blocked user");
-    // }
+    if (toUser.isBlocked) {
+      throw new HttpException(400, "Can't chat with blocked user");
+    }
 
     let conversation = await this.conversations.findOne({
       fromUser: currentUser.id,

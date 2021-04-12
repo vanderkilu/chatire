@@ -26,6 +26,13 @@ const StyledSidebarText = styled.p`
   color: #ffffff;
   font-size: 1.4rem;
 `;
+const StyledIndicator = styled.div`
+  width: 1rem;
+  height: 1rem;
+  background-color: #1b5e20;
+  border-radius: 50%;
+  margin-left: 0.5rem;
+`;
 
 interface OnlineUserProps {
   user: User;
@@ -43,9 +50,10 @@ const OnlineUser: React.FC<OnlineUserProps> = ({
   return (
     <StyledSidebarUser onClick={() => initiateConversation(user.identity)}>
       <StyledSidebarUserPlaceholder>
-        <StyledText>{getUserInitial(user.username)}</StyledText>
+        <StyledText color="#ffffff">{getUserInitial(user.username)}</StyledText>
       </StyledSidebarUserPlaceholder>
       <StyledSidebarText> {user.username} </StyledSidebarText>
+      <StyledIndicator></StyledIndicator>
     </StyledSidebarUser>
   );
 };

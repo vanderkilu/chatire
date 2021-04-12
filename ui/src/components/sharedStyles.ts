@@ -44,6 +44,9 @@ export const StyledButton = styled.button`
   }
 `;
 
-export const StyledText = styled.p`
+export const StyledText = styled.p<{
+  color: string;
+}>`
   font-size: 1.4rem;
+  color: ${(props) => props.color};
 `;

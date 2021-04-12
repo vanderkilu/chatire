@@ -106,10 +106,10 @@ const MainChat: React.FC<{}> = () => {
     <StyledChatContainer>
       <StyledChatSidebar>
         <StyledChatHeader mb={10}>
-          <StyledText>{user.email}</StyledText>
+          <StyledText color="#212121">{user.email}</StyledText>
         </StyledChatHeader>
         <StyledChatHeader mb={0.5}>
-          <StyledText>Online Users</StyledText>
+          <StyledText color="#212121">Online Users</StyledText>
         </StyledChatHeader>
         {onlineUsers.map((user) => (
           <OnlineUser
