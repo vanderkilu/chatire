@@ -5,11 +5,18 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import Auth0ProviderWithHistory from "./components/AuthProvider";
 import { BrowserRouter as Router } from "react-router-dom";
+import { ToastProvider } from "react-toast-notifications";
 
 ReactDOM.render(
   <Router>
     <Auth0ProviderWithHistory>
-      <App />
+      <ToastProvider
+        autoDismiss
+        autoDismissTimeout={5000}
+        placement="top-center"
+      >
+        <App />
+      </ToastProvider>
     </Auth0ProviderWithHistory>
   </Router>,
   document.getElementById("root")

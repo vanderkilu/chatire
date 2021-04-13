@@ -2,7 +2,9 @@ import styled, { css } from "styled-components";
 import { Chat } from "../types";
 import { Loader } from "./sharedStyles";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useToasts } from "react-toast-notifications";
 import { useRef, useState } from "react";
+import { PROVIDE_MESSAGE } from "../constants";
 
 const StyledChatArea = styled.div`
   display: flex;
@@ -157,6 +159,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   isLoading,
   sendMessage,
 }) => {
+  const { addToast } = useToasts();
   const msgBoxRef = useRef<HTMLDivElement>(null);
   const [message, setMessage] = useState("");
   const handleOnInputChange = (e: InputEvent) => {
@@ -164,6 +167,13 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   };
   const handleOnSubmit = (e: FormEvent) => {
     e.preventDefault();
+    if (!message) {
+      addToast(PROVIDE_MESSAGE, {
+        appearance: "warning",
+        autoDismiss: true,
+      });
+      return;
+    }
     sendMessage(message);
     setMessage("");
     if (msgBoxRef.current) {

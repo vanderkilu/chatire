@@ -39,6 +39,7 @@ const StyledChatHeader = styled.header<{
 
 const MainChat: React.FC<{}> = () => {
   const { user, getAccessTokenSilently } = useAuth0();
+
   const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User>();
   const [currentChats, setCurrentChats] = useState<Chat[]>([]);
@@ -53,19 +54,23 @@ const MainChat: React.FC<{}> = () => {
   useEffect(() => {
     const USER = { identity: user.sub, username: user.name };
     socket.emit(ChatEvent.NEW_USER, USER);
+
     socket.on(ChatEvent.NEW_USER, (users: User[]) => {
       const onlineUsers = users.filter((u) => u.identity !== user.sub);
       setOnlineUsers(onlineUsers);
     });
+
     socket.on(ChatEvent.NEW_CHAT_MESSAGE, (chat: Chat) => {
       setCurrentChats((chats) => [...chats, chat]);
     });
+
     socket.on(ChatEvent.USER_LEAVE, (offlineUser: User) => {
       setOnlineUsers((users) =>
         users.filter((u) => u.identity !== offlineUser.identity)
       );
       setSelectedUser(undefined);
     });
+
     return () => {
       clearEvents(USER);
     };
