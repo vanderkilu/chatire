@@ -45,6 +45,11 @@ const MainChat: React.FC<{}> = () => {
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [isMessageCreateLoading, setIsMessageCreateLoading] = useState(false);
 
+  const clearEvents = (user: User) => {
+    socket.off(ChatEvent.NEW_USER);
+    socket.off(ChatEvent.NEW_CHAT_MESSAGE);
+  };
+
   useEffect(() => {
     const USER = { identity: user.sub, username: user.name };
     socket.emit(ChatEvent.NEW_USER, USER);
@@ -52,16 +57,15 @@ const MainChat: React.FC<{}> = () => {
       setOnlineUsers(users);
     });
     socket.on(ChatEvent.NEW_CHAT_MESSAGE, (chat: Chat) => {
-      console.log("chat", chat);
       setCurrentChats((chats) => [...chats, chat]);
     });
-    socket.on(ChatEvent.USER_LEAVE, (user: User) => {
-      //todo
+    socket.on(ChatEvent.USER_LEAVE, (offlineUser: User) => {
+      setOnlineUsers((users) =>
+        users.filter((user) => user.identity === offlineUser.identity)
+      );
     });
     return () => {
-      socket.emit(ChatEvent.USER_DISCONNECT, USER);
-      socket.off(ChatEvent.NEW_USER);
-      socket.off(ChatEvent.NEW_CHAT_MESSAGE);
+      clearEvents(USER);
     };
   }, []);
 
@@ -78,7 +82,6 @@ const MainChat: React.FC<{}> = () => {
         );
         socket.emit(ChatEvent.NEW_CONVERSATION, conversation._id);
         const chats = await getChats(selectedUser.identity, token);
-        console.log("savedChats", chats);
         setCurrentChats(chats);
         setIsChatLoading(false);
       }
@@ -100,7 +103,6 @@ const MainChat: React.FC<{}> = () => {
           ...message,
           conversationId: message.conversation._id,
         };
-        console.log("message", message);
         setIsMessageCreateLoading(false);
         socket.emit(ChatEvent.CHAT, MESSAGE);
       } catch (err) {

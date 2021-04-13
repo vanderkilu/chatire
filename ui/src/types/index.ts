@@ -22,7 +22,6 @@ export interface Conversation {
 
 export enum ChatEvent {
   CONNECT = "connection",
-  USER_DISCONNECT = "userDisconnect",
   CHAT = "chat",
   BLOCK = "block",
   NEW_USER = "newUser",
