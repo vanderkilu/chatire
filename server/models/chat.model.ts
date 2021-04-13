@@ -8,6 +8,14 @@ const ChatSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Conversation",
     },
+    fromUser: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    toUser: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   { timestamps: true }
 );

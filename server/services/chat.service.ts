@@ -24,16 +24,12 @@ class ChatService implements IChatService {
       identity: toUserIdentity,
     });
     const conversation = await this.conversations.findOne({
-      fromUser: currentUser.id,
-      toUser: toUser.id,
+      participants: { $all: [currentUser.id, toUser.id] },
     });
     if (conversation) return conversation;
     const newConversation = await this.conversations.create({
-      fromUser: currentUser.id,
-      toUser: toUser.id,
+      participants: [currentUser.id, toUser.id],
     });
-    newConversation.populate("fromUser");
-    newConversation.populate("toUser");
     return newConversation;
   }
 
@@ -48,8 +44,7 @@ class ChatService implements IChatService {
       identity: toUserIdentity,
     });
     const conversation = await this.conversations.findOne({
-      fromUser: currentUser.id,
-      toUser: toUser.id,
+      participants: { $all: [currentUser.id, toUser.id] },
     });
     if (!conversation) {
       //if there is no conversation then there is no chats so return
@@ -58,13 +53,8 @@ class ChatService implements IChatService {
     }
     const chats = await this.chats
       .find({ conversation: conversation.id })
-      .populate({
-        path: "conversation",
-        populate: [
-          { path: "fromUser", model: "User" },
-          { path: "toUser", model: "User" },
-        ],
-      });
+      .populate("fromUser")
+      .populate("toUser");
     return chats;
   }
 
@@ -78,10 +68,10 @@ class ChatService implements IChatService {
       throw new HttpException(400, "Can't chat with blocked user");
     }
 
-    let conversation = await this.conversations.findOne({
-      fromUser: currentUser.id,
-      toUser: toUser._id,
+    const conversation = await this.conversations.findOne({
+      participants: { $all: [currentUser.id, toUser._id] },
     });
+
     if (!conversation) {
       throw new HttpException(
         400,
@@ -92,18 +82,12 @@ class ChatService implements IChatService {
     const chat = new this.chats({
       ...chatData,
       conversation: conversation.id,
+      fromUser: currentUser.id,
+      toUser: currentUser._id,
     });
-    return chat.save().then((t) =>
-      t
-        .populate({
-          path: "conversation",
-          populate: [
-            { path: "fromUser", model: "User" },
-            { path: "toUser", model: "User" },
-          ],
-        })
-        .execPopulate()
-    );
+    return chat
+      .save()
+      .then((t) => t.populate("fromUser").populate("toUser").execPopulate());
   }
 }
 

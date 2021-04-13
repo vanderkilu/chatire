@@ -54,15 +54,17 @@ const MainChat: React.FC<{}> = () => {
     const USER = { identity: user.sub, username: user.name };
     socket.emit(ChatEvent.NEW_USER, USER);
     socket.on(ChatEvent.NEW_USER, (users: User[]) => {
-      setOnlineUsers(users);
+      const onlineUsers = users.filter((u) => u.identity !== user.sub);
+      setOnlineUsers(onlineUsers);
     });
     socket.on(ChatEvent.NEW_CHAT_MESSAGE, (chat: Chat) => {
       setCurrentChats((chats) => [...chats, chat]);
     });
     socket.on(ChatEvent.USER_LEAVE, (offlineUser: User) => {
       setOnlineUsers((users) =>
-        users.filter((user) => user.identity === offlineUser.identity)
+        users.filter((u) => u.identity !== offlineUser.identity)
       );
+      setSelectedUser(undefined);
     });
     return () => {
       clearEvents(USER);
@@ -101,7 +103,7 @@ const MainChat: React.FC<{}> = () => {
         );
         const MESSAGE = {
           ...message,
-          conversationId: message.conversation._id,
+          conversationId: message.conversation,
         };
         setIsMessageCreateLoading(false);
         socket.emit(ChatEvent.CHAT, MESSAGE);

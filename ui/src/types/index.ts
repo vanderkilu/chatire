@@ -11,13 +11,14 @@ export interface AuthUser {
 
 export interface Chat {
   message: string;
-  conversation: Conversation;
+  conversation: string;
+  fromUser: User;
+  toUser: User;
 }
 
 export interface Conversation {
   _id: string;
-  fromUser: User;
-  toUser: User;
+  participants: User[];
 }
 
 export enum ChatEvent {

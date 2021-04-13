@@ -80,12 +80,15 @@ const StyledMsgImg = styled.div`
   background-color: #424242;
   color: #ffffff;
 `;
-const StyledMsgBubble = styled.div`
+const StyledMsgBubble = styled.div<{
+  isForUser: boolean;
+}>`
   max-width: 450px;
   padding: 15px;
   border-radius: 15px;
   background: var(--left-msg-bg);
-  background-color: var(--chat-from-color);
+  background-color: ${(props) =>
+    props.isForUser ? "var(--chat-from-color)" : "var(--secondary-color)"};
   * {
     color: #ffffff;
   }
@@ -123,18 +126,14 @@ interface ChatMessage {
 const ChatMessage: React.FC<ChatMessage> = ({ chat }) => {
   const { user } = useAuth0();
 
-  const isForUser = chat.conversation.fromUser.identity === user.sub;
-  const forUser = chat.conversation.fromUser.username;
-  const toUser = chat.conversation.toUser.username;
+  const isForUser = chat.fromUser.identity === user.sub;
 
   return (
     <StyledMsg isForUser={isForUser}>
-      <StyledMsgImg>
-        {isForUser ? forUser.charAt(0) : toUser.charAt(0)}
-      </StyledMsgImg>
-      <StyledMsgBubble>
+      <StyledMsgImg>{chat.fromUser.username.charAt(0)}</StyledMsgImg>
+      <StyledMsgBubble isForUser={isForUser}>
         <StyledMsgInfo>
-          <StyledMsgInfoName>{isForUser ? forUser : toUser}</StyledMsgInfoName>
+          <StyledMsgInfoName>{chat.fromUser.username}</StyledMsgInfoName>
           <StyledMsgInfoTime>12:30</StyledMsgInfoTime>
         </StyledMsgInfo>
 
