@@ -40,11 +40,9 @@ class ChatService implements IChatService {
     const currentUser = await this.users.findOne({
       identity: fromUserIdentity,
     });
-    console.log("toUserIdentity", toUserIdentity);
     const toUser = await this.users.findOne({
       identity: toUserIdentity,
     });
-    console.log("toUser", toUser);
     const conversation = await this.conversations.findOne({
       participants: { $all: [currentUser.id, toUser.id] },
     });
