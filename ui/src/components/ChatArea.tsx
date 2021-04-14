@@ -135,6 +135,7 @@ type InputEvent = React.ChangeEvent<HTMLInputElement>;
 interface ChatAreaProps {
   chats: Chat[];
   isLoading: boolean;
+  isDisabled: boolean;
   sendMessage: (msg: string) => void;
 }
 
@@ -142,6 +143,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   chats,
   isLoading,
   sendMessage,
+  isDisabled,
 }) => {
   const { addToast } = useToasts();
   const msgBoxRef = useRef<HTMLDivElement>(null);
@@ -178,8 +180,14 @@ const ChatArea: React.FC<ChatAreaProps> = ({
         </StyledLoaderContainer>
       ) : (
         <StyledChatForm onSubmit={handleOnSubmit}>
-          <StyledChatInput onChange={handleOnInputChange} value={message} />
-          <StyledButton size="normal">Send</StyledButton>
+          <StyledChatInput
+            onChange={handleOnInputChange}
+            value={message}
+            disabled={isDisabled}
+          />
+          <StyledButton size="normal" disabled={isDisabled}>
+            Send
+          </StyledButton>
         </StyledChatForm>
       )}
     </StyledChatArea>

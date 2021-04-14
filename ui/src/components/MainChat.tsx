@@ -52,9 +52,8 @@ const MainChat: React.FC<{}> = () => {
   const [selectedUser, setSelectedUser] = useState<User>();
   const [currentChats, setCurrentChats] = useState<Chat[]>([]);
   const [isChatLoading, setIsChatLoading] = useState(false);
-  const [isMessageCreateLoading, setIsMessageCreateLoading] = useState(false);
 
-  const clearEvents = (user: User) => {
+  const clearEvents = () => {
     socket.off(ChatEvent.NEW_USER);
     socket.off(ChatEvent.NEW_CHAT_MESSAGE);
   };
@@ -88,7 +87,7 @@ const MainChat: React.FC<{}> = () => {
     });
 
     return () => {
-      clearEvents(USER);
+      clearEvents();
     };
   }, []);
 
@@ -120,7 +119,6 @@ const MainChat: React.FC<{}> = () => {
   const sendMessage = async (msg: string) => {
     const token = await getAccessTokenSilently();
     if (selectedUser) {
-      setIsMessageCreateLoading(true);
       try {
         const message = await createChat(
           { message: msg, toUser: selectedUser.identity },
@@ -130,14 +128,12 @@ const MainChat: React.FC<{}> = () => {
           ...message,
           conversationId: message.conversation,
         };
-        setIsMessageCreateLoading(false);
         socket.emit(ChatEvent.CHAT, MESSAGE);
       } catch (err) {
         addToast(SERVER_ERROR, {
           appearance: "error",
           autoDismiss: true,
         });
-        setIsMessageCreateLoading(false);
       }
     }
   };
@@ -146,12 +142,15 @@ const MainChat: React.FC<{}> = () => {
     const token = await getAccessTokenSilently();
     try {
       const response = await blockUser(id, token);
-      console.log(response.blockStatus);
       setOnlineUsers((users) =>
         users.map((u) =>
           u.identity === id ? { ...u, isBlocked: response.blockStatus } : u
         )
       );
+      if (selectedUser?.identity === id) {
+        const newUser = { ...selectedUser, isBlocked: response.blockStatus };
+        setSelectedUser(newUser);
+      }
       const data: BlockedUser = {
         blocker: response.user,
         blockee: response.blockedUser,
@@ -185,6 +184,7 @@ const MainChat: React.FC<{}> = () => {
       </StyledChatSidebar>
       {selectedUser ? (
         <ChatArea
+          isDisabled={selectedUser.isBlocked}
           isLoading={isChatLoading}
           chats={currentChats}
           sendMessage={sendMessage}

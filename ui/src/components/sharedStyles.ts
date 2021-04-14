@@ -44,6 +44,12 @@ export const StyledButton = styled.button<{
   cursor: pointer;
   transition: background 0.23s;
   ${(props) =>
+    props.disabled &&
+    css`
+      opacity: 0.5;
+      cursor: not-allowed;
+    `}
+  ${(props) =>
     props.ml &&
     css`
       margin-left: ${props.ml}rem;
