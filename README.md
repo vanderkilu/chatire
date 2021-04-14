@@ -63,6 +63,8 @@ client should start on port :3000
 
 **NB: The socket connection expects the server to run on port :8080 and the client/frontend to run on port :3000**
 
+**NB: You probably will have to create two Auth0 accounts in order to test this application**
+
 #### Things to improve if I had enough time
 
 1. use redis cluster to enable application to scale
