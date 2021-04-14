@@ -1,6 +1,7 @@
 export interface User {
   identity: string;
   username: string;
+  isBlocked: boolean;
 }
 
 export interface AuthUser {
@@ -21,13 +22,19 @@ export interface Conversation {
   participants: User[];
 }
 
+export interface BlockedUser {
+  blocker: User;
+  blockee: User;
+}
+
 export enum ChatEvent {
   CONNECT = "connection",
   CHAT = "chat",
-  BLOCK = "block",
   NEW_USER = "newUser",
   NEW_CHAT_MESSAGE = "newChatMessage",
   NEW_CONVERSATION = "newConversation",
   USER_LEAVE = "userLeave",
   LEAVE_CONVERSATION = "leaveConversation",
+  REMOVE_BLOCKER = "removeBlocker",
+  USER_BLOCK = "userBlock",
 }

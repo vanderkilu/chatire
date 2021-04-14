@@ -75,3 +75,19 @@ export async function createChat(payload: ChatPayload, token: string) {
   } as MutateData;
   return mutate<Chat>(chatsUrl, option);
 }
+
+export async function blockUser(userId: string, token: string) {
+  const option = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ userId }),
+  } as MutateData;
+  const url = `${usersUrl}/block`;
+  return mutate<{ user: User; blockedUser: User; blockStatus: boolean }>(
+    url,
+    option
+  );
+}

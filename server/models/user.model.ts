@@ -5,10 +5,21 @@ const UserSchema = new mongoose.Schema(
   {
     identity: String,
     username: String,
-    isBlocked: {
-      type: Boolean,
-      default: false,
-    },
+    //list of users this user has blocked
+    blockList: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    //keep track of those who have blocked user
+    //so user doesn't show up on their online list
+    blockedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true }
 );

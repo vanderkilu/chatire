@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 
 const loadingAnimation = keyframes`
   to {
@@ -27,18 +27,27 @@ export const StyledLoaderContainer = styled.div`
   width: 100%;
 `;
 
-export const StyledButton = styled.button`
+export const StyledButton = styled.button<{
+  size: "small" | "normal";
+  mr?: number;
+  ml?: number;
+}>`
   margin-left: 10px;
-  padding: 1.5rem;
-  width: 20rem;
+  padding: ${(props) => (props.size === "small" ? "0.5rem" : "1.5rem")};
+  width: ${(props) => (props.size === "small" ? "5rem" : "20rem")};
   background: var(--secondary-color);
   color: #ffffff;
   border-radius: 6px;
-  font-size: 1.5rem;
+  font-size: ${(props) => (props.size === "small" ? "1rem" : "1.5rem")};
   border: none;
   font-weight: bold;
   cursor: pointer;
   transition: background 0.23s;
+  ${(props) =>
+    props.ml &&
+    css`
+      margin-left: ${props.ml}rem;
+    `}
   &:hover {
     background: var(--secondary-color);
   }

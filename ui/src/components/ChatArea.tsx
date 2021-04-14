@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 import { Chat } from "../types";
-import { Loader } from "./sharedStyles";
+import { Loader, StyledButton } from "./sharedStyles";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useToasts } from "react-toast-notifications";
 import { useRef, useState } from "react";
@@ -40,22 +40,6 @@ const StyledChatInput = styled.input`
   color: #ffffff;
   font: inherit;
   font-size: 1.2rem;
-`;
-
-const StyledBtn = styled.button`
-  margin-left: 10px;
-  padding: 1.5rem;
-  width: 20rem;
-  background: var(--secondary-color);
-  color: #ffffff;
-  border-radius: 6px;
-  font-size: 1.5rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.23s;
-  &:hover {
-    background: var(--secondary-color);
-  }
 `;
 
 const StyledMsg = styled.div<{
@@ -195,7 +179,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       ) : (
         <StyledChatForm onSubmit={handleOnSubmit}>
           <StyledChatInput onChange={handleOnInputChange} value={message} />
-          <StyledBtn>Send</StyledBtn>
+          <StyledButton size="normal">Send</StyledButton>
         </StyledChatForm>
       )}
     </StyledChatArea>

@@ -33,8 +33,11 @@ class UserController {
     next: NextFunction
   ) => {
     try {
-      const userId = req.params.userId;
-      const user = await this.userService.toggleUserBlock(userId);
+      const userIdentity = req.body.userId;
+      const user = await this.userService.toggleUserBlock(
+        req.user.sub,
+        userIdentity
+      );
       res.status(201).json(user);
     } catch (err) {
       next(err);

@@ -1,5 +1,6 @@
-import LoginButton from "./LoginButton";
 import styled from "styled-components";
+import { useAuth0 } from "@auth0/auth0-react";
+import { StyledButton } from "./sharedStyles";
 
 const Wrapper = styled.div`
   display: flex;
@@ -11,9 +12,12 @@ const Wrapper = styled.div`
 `;
 
 const Home: React.FC<{}> = () => {
+  const { loginWithRedirect } = useAuth0();
   return (
     <Wrapper>
-      <LoginButton></LoginButton>
+      <StyledButton size="normal" onClick={() => loginWithRedirect()}>
+        Log in to continue
+      </StyledButton>
     </Wrapper>
   );
 };

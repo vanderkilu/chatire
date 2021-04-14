@@ -2,12 +2,19 @@ import styled from "styled-components";
 import io from "socket.io-client";
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Chat, ChatEvent, User } from "../types";
+import { BlockedUser, Chat, ChatEvent, User } from "../types";
 import ChatWelcome from "./ChatWelcome";
 import ChatArea from "./ChatArea";
 import { StyledText } from "./sharedStyles";
 import OnlineUser from "./OnlineUser";
-import { createChat, createConversation, getChats } from "../api/api";
+import { useToasts } from "react-toast-notifications";
+import {
+  blockUser,
+  createChat,
+  createConversation,
+  getChats,
+} from "../api/api";
+import { SERVER_ERROR } from "../constants";
 
 const SOCKET_URL = "http://localhost:8080";
 const socket = io(SOCKET_URL, {
@@ -39,6 +46,7 @@ const StyledChatHeader = styled.header<{
 
 const MainChat: React.FC<{}> = () => {
   const { user, getAccessTokenSilently } = useAuth0();
+  const { addToast } = useToasts();
 
   const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User>();
@@ -52,7 +60,7 @@ const MainChat: React.FC<{}> = () => {
   };
 
   useEffect(() => {
-    const USER = { identity: user.sub, username: user.name };
+    const USER = { identity: user.sub, username: user.name, isBlocked: false };
     socket.emit(ChatEvent.NEW_USER, USER);
 
     socket.on(ChatEvent.NEW_USER, (users: User[]) => {
@@ -69,6 +77,14 @@ const MainChat: React.FC<{}> = () => {
         users.filter((u) => u.identity !== offlineUser.identity)
       );
       setSelectedUser(undefined);
+    });
+
+    socket.on(ChatEvent.REMOVE_BLOCKER, (data: BlockedUser) => {
+      if (data.blockee.identity === user.sub) {
+        setOnlineUsers((users) =>
+          users.filter((u) => u.identity !== data.blocker.identity)
+        );
+      }
     });
 
     return () => {
@@ -93,6 +109,10 @@ const MainChat: React.FC<{}> = () => {
         setIsChatLoading(false);
       }
     } catch (err) {
+      addToast(SERVER_ERROR, {
+        appearance: "error",
+        autoDismiss: true,
+      });
       setIsChatLoading(false);
     }
   };
@@ -113,8 +133,35 @@ const MainChat: React.FC<{}> = () => {
         setIsMessageCreateLoading(false);
         socket.emit(ChatEvent.CHAT, MESSAGE);
       } catch (err) {
+        addToast(SERVER_ERROR, {
+          appearance: "error",
+          autoDismiss: true,
+        });
         setIsMessageCreateLoading(false);
       }
+    }
+  };
+
+  const toggleUserBlock = async (id: string) => {
+    const token = await getAccessTokenSilently();
+    try {
+      const response = await blockUser(id, token);
+      console.log(response.blockStatus);
+      setOnlineUsers((users) =>
+        users.map((u) =>
+          u.identity === id ? { ...u, isBlocked: response.blockStatus } : u
+        )
+      );
+      const data: BlockedUser = {
+        blocker: response.user,
+        blockee: response.blockedUser,
+      };
+      socket.emit(ChatEvent.USER_BLOCK, data);
+    } catch {
+      addToast(SERVER_ERROR, {
+        appearance: "error",
+        autoDismiss: true,
+      });
     }
   };
 
@@ -129,6 +176,7 @@ const MainChat: React.FC<{}> = () => {
         </StyledChatHeader>
         {onlineUsers.map((user) => (
           <OnlineUser
+            toggleUserBlock={toggleUserBlock}
             user={user}
             key={user.identity}
             initiateConversation={initiateConversation}

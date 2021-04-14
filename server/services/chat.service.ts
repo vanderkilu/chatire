@@ -40,9 +40,11 @@ class ChatService implements IChatService {
     const currentUser = await this.users.findOne({
       identity: fromUserIdentity,
     });
+    console.log("toUserIdentity", toUserIdentity);
     const toUser = await this.users.findOne({
       identity: toUserIdentity,
     });
+    console.log("toUser", toUser);
     const conversation = await this.conversations.findOne({
       participants: { $all: [currentUser.id, toUser.id] },
     });
@@ -63,10 +65,6 @@ class ChatService implements IChatService {
     const toUser: User = await this.users.findOne({
       identity: chatData.toUser,
     });
-
-    if (toUser.isBlocked) {
-      throw new HttpException(400, "Can't chat with blocked user");
-    }
 
     const conversation = await this.conversations.findOne({
       participants: { $all: [currentUser.id, toUser._id] },

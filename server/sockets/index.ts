@@ -6,6 +6,11 @@ type User = {
   username: string;
 };
 
+type UserBlock = {
+  blocker: User;
+  blockee: User;
+};
+
 type ChatMessage = {
   message: string;
   conversationId: string;
@@ -53,6 +58,10 @@ class ChatSocketServer {
         this.io.sockets
           .in(chatMsg.conversationId)
           .emit(ChatEvent.NEW_CHAT_MESSAGE, chatMsg);
+      });
+
+      socket.on(ChatEvent.USER_BLOCK, (data: UserBlock) => {
+        this.io.emit(ChatEvent.REMOVE_BLOCKER, data);
       });
     });
   }

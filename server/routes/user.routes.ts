@@ -22,8 +22,8 @@ class UserRoute implements Route {
       validationMiddleware(UserDTO),
       this.userController.createUser
     );
-    this.router.get(
-      `${this.path}/block/:userId`,
+    this.router.put(
+      `${this.path}/block/`,
       checkJwt,
       this.userController.toggleUserBlock
     );
