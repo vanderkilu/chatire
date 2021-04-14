@@ -71,6 +71,6 @@ client should start on port :3000
 4. Unit/Integration Testing
 5. Responsiveness
 
-![image](https://github.com/vanderkilu/magnum-opus-assignment/blob/master/demo/chat1.jpg)
+![image](https://github.com/vanderkilu/magnum-opus-assignment/blob/master/demo/chat1.png)
 
-![image](https://github.com/vanderkilu/magnum-opus-assignment/blob/master/demo/chat2.jpg)
+![image](https://github.com/vanderkilu/magnum-opus-assignment/blob/master/demo/chat1.png)
