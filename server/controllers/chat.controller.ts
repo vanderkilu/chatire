@@ -3,7 +3,7 @@ import { IChatService } from "../interfaces/chat.service.interface";
 import { RequestWithUser } from "../interfaces/routes.interface";
 import { ChatDTO } from "../dtos/chat.dto";
 
-class UserController {
+class ChatController {
   private chatService: IChatService;
 
   constructor(chatService: IChatService) {
@@ -59,4 +59,4 @@ class UserController {
   };
 }
 
-export default UserController;
+export default ChatController;

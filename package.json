@@ -4,7 +4,6 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node dist/server.js",
     "build": "tsc --module commonjs",
-    "postinstall": "npm run build",
     "dev": "cross-env NODE_ENV=development nodemon --watch server --delay 1 --exec 'ts-node' server/server.ts",
     "test": "jest --forceExit --detectOpenHandles",
     "lint": "tslint -p tsconfig.json -c tslint.json"
