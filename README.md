@@ -1,7 +1,7 @@
-# Magnum Opus Assignment
+# ChatApp
 
-The aim of this assignment is to to create a live instant messaging application, with authorization,
-and a simple frontend client.
+This is a live instant messaging application, with authorization from Autho,
+and a frontend client.
 
 ## Technologies Used
 
@@ -64,14 +64,6 @@ client should start on port :3000
 **NB: The socket connection expects the server to run on port :8080 and the client/frontend to run on port :3000**
 
 **NB: You probably will have to create two Auth0 accounts in order to test this application**
-
-#### Things to improve if I had enough time
-
-1. use redis cluster to enable application to scale
-2. use redis set feature to track online users instead of using server in memory set.
-3. sync realtime blocked users with the db.
-4. Unit/Integration Testing
-5. Responsiveness
 
 ![image](https://github.com/vanderkilu/magnum-opus-assignment/blob/master/demo/chat1.png)
 
