@@ -26,7 +26,7 @@ Auth0 for authentication/authorization for both frontend/backend
 ## Setting up project locally
 
 ```
-1. git clone https://github.com/vanderkilu/magnum-opus-assignment.git.
+1. git clone https://github.com/vanderkilu/chatire.git.
 2. cd <cloned-directory>
 3. cp example.env .env [This will create a .env file for the server using the example.env]
 4. cd ui and run cp example.env .env [This will create a .env for the client/ui using the example.env]
